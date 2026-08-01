@@ -134,7 +134,8 @@ Resources:
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
-                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOwner}/${GitHubRepository}:ref:refs/heads/main"
+              StringLike:
+                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOwner}/${GitHubRepository}:*"
       Policies:
         - PolicyName: DeployStaticWebsite
           PolicyDocument:
@@ -179,4 +180,3 @@ Outputs:
   GitHubActionsRoleArn:
     Description: OIDC role assumed by GitHub Actions.
     Value: !GetAtt GitHubActionsRole.Arn
-
