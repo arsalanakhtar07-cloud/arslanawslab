@@ -4,8 +4,8 @@
   "description": "Arslan's first AWS cloud project.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#04111d",
-  "theme_color": "#071a2b",
+  "background_color": "#f8faff",
+  "theme_color": "#f8faff",
   "icons": [
     {
       "src": "/assets/favicon.png",
@@ -14,4 +14,3 @@
     }
   ]
 }
-

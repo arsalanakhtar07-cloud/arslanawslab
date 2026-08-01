@@ -12,17 +12,18 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "site" / "assets"
 
-NAVY = "#04111d"
-NAVY_2 = "#071a2b"
-CARD = "#0b263d"
-CYAN = "#42d3ff"
-CYAN_SOFT = "#8ae7ff"
-BLUE = "#649dff"
-GREEN = "#5ee6a8"
-ORANGE = "#ffad42"
-WHITE = "#f5f8fb"
-MUTED = "#a9b7c5"
-LINE = "#24445c"
+NAVY = "#f8faff"
+NAVY_2 = "#f1f5ff"
+CARD = "#ffffff"
+CYAN = "#3b82f6"
+CYAN_SOFT = "#2563eb"
+BLUE = "#7969e8"
+GREEN = "#15966f"
+ORANGE = "#e99116"
+WHITE = "#17243f"
+MUTED = "#61708a"
+LINE = "#d8e2f2"
+INK = "#17243f"
 
 
 def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
@@ -45,11 +46,15 @@ def rounded_gradient(size: tuple[int, int]) -> Image.Image:
         for x in range(width):
             cyan_glow = max(0.0, 1.0 - math.hypot(x - width * 0.82, y - height * 0.15) / (width * 0.72))
             blue_glow = max(0.0, 1.0 - math.hypot(x - width * 0.16, y - height * 0.85) / (width * 0.65))
-            base = (4, 17, 29)
-            pixels[x, y] = (
-                int(base[0] + 7 * cyan_glow + 8 * blue_glow),
-                int(base[1] + 34 * cyan_glow + 15 * blue_glow),
-                int(base[2] + 45 * cyan_glow + 35 * blue_glow),
+            cyan_weight = 0.3 * cyan_glow
+            blue_weight = 0.22 * blue_glow
+            base_weight = 1.0 - cyan_weight - blue_weight
+            base = (248, 250, 255)
+            sky = (224, 242, 255)
+            lavender = (241, 231, 255)
+            pixels[x, y] = tuple(
+                int(base[channel] * base_weight + sky[channel] * cyan_weight + lavender[channel] * blue_weight)
+                for channel in range(3)
             )
     return image
 
@@ -74,7 +79,7 @@ def node(
     x1, y1, x2, y2 = box
     draw.rounded_rectangle(box, radius=26, fill=CARD, outline=LINE, width=3)
     draw.rounded_rectangle((x1 + 20, y1 + 20, x1 + 74, y1 + 74), radius=16, fill=accent)
-    draw.text((x1 + 47, y1 + 47), number, font=font(23, True), fill=NAVY, anchor="mm")
+    draw.text((x1 + 47, y1 + 47), number, font=font(23, True), fill=INK, anchor="mm")
     draw.text((x1 + 94, y1 + 21), title, font=font(29, True), fill=WHITE)
     draw.multiline_text((x1 + 94, y1 + 62), subtitle, font=font(20), fill=MUTED, spacing=5)
 
@@ -107,7 +112,7 @@ def generate_architecture() -> None:
     node(draw, visitor_box, "6", "Visitor", "Opens the CloudFront URL\nfrom a phone or computer", BLUE)
     arrow(draw, (665, 675), (535, 675), CYAN)
 
-    draw.rounded_rectangle((1150, 585, 1510, 760), radius=26, fill="#082e35", outline="#287766", width=3)
+    draw.rounded_rectangle((1150, 585, 1510, 760), radius=26, fill="#ecfdf5", outline="#79c8aa", width=3)
     draw.text((1180, 613), "Security path", font=font(27, True), fill=GREEN)
     draw.text((1180, 658), "GitHub OIDC", font=font(22), fill=WHITE)
     draw.text((1180, 696), "Short-lived credentials", font=font(22), fill=WHITE)
@@ -120,9 +125,9 @@ def generate_architecture() -> None:
 def generate_og_card() -> None:
     image = rounded_gradient((1200, 630))
     draw = ImageDraw.Draw(image)
-    draw.rounded_rectangle((56, 54, 1144, 576), radius=34, fill="#071d30", outline=LINE, width=3)
+    draw.rounded_rectangle((56, 54, 1144, 576), radius=34, fill="#ffffff", outline=LINE, width=3)
     draw.rounded_rectangle((92, 91, 154, 153), radius=18, fill=CYAN)
-    draw.text((123, 122), "A", font=font(31, True), fill=NAVY, anchor="mm")
+    draw.text((123, 122), "A", font=font(31, True), fill=INK, anchor="mm")
     draw.text((174, 102), "ARSLAN AWS LAB", font=font(25, True), fill=CYAN_SOFT)
     draw.text((92, 195), "From one Git push", font=font(64, True), fill=WHITE)
     draw.text((92, 274), "to a live AWS website.", font=font(64, True), fill=WHITE)
@@ -144,7 +149,7 @@ def generate_favicon() -> None:
     image = Image.new("RGBA", (192, 192), NAVY)
     draw = ImageDraw.Draw(image)
     draw.rounded_rectangle((16, 16, 176, 176), radius=48, fill=CYAN)
-    draw.text((96, 92), "A", font=font(112, True), fill=NAVY, anchor="mm")
+    draw.text((96, 92), "A", font=font(112, True), fill=INK, anchor="mm")
     image.save(ASSETS / "favicon.png", optimize=True)
 
 
