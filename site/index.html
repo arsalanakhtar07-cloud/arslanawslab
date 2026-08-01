@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Arslan AWS Lab | First AWS Cloud Project</title>
+    <meta name="description" content="Explore Arslan's first AWS project: a fast, secure static website deployed from GitHub to Amazon S3 and CloudFront with GitHub Actions.">
+    <meta name="author" content="Arslan">
+    <meta name="keywords" content="Arslan AWS lab, first AWS project, Amazon S3 static website, CloudFront, GitHub Actions, AWS OIDC, cloud portfolio">
+    <meta name="theme-color" content="#071a2b">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="__SITE_URL__/">
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="preload" href="/assets/aws-deployment-architecture.png" as="image" type="image/png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Arslan AWS Lab">
+    <meta property="og:title" content="Arslan AWS Lab | From Git Push to AWS">
+    <meta property="og:description" content="A beginner-friendly cloud project using private Amazon S3, CloudFront, and secure GitHub Actions deployment.">
+    <meta property="og:url" content="__SITE_URL__/">
+    <meta property="og:image" content="__SITE_URL__/assets/og-card.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Arslan AWS Lab deployment flow from GitHub to CloudFront">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Arslan AWS Lab | From Git Push to AWS">
+    <meta name="twitter:description" content="See how Arslan ships a static website automatically with GitHub Actions, S3, and CloudFront.">
+    <meta name="twitter:image" content="__SITE_URL__/assets/og-card.png">
+
+    <link rel="stylesheet" href="/styles.css">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "__SITE_URL__/#website",
+            "url": "__SITE_URL__/",
+            "name": "Arslan AWS Lab",
+            "description": "Arslan's first AWS cloud project, deployed from GitHub to Amazon S3 and CloudFront.",
+            "inLanguage": "en"
+          },
+          {
+            "@type": "Person",
+            "@id": "__SITE_URL__/#arslan",
+            "name": "Arslan",
+            "url": "__SITE_URL__/",
+            "knowsAbout": ["Amazon Web Services", "Amazon S3", "Amazon CloudFront", "GitHub Actions", "Cloud deployment"]
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What is Arslan AWS Lab?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Arslan AWS Lab is a beginner-friendly static website project that demonstrates an automatic deployment from GitHub to AWS."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How does a GitHub update reach the live website?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "A push to the main branch starts GitHub Actions. The workflow builds the site, uploads it to a private S3 bucket, and invalidates the CloudFront cache."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Are AWS access keys stored in GitHub?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. GitHub Actions uses OIDC to request short-lived AWS credentials for a tightly limited IAM role."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Arslan AWS Lab home">
+        <span class="brand-mark" aria-hidden="true">A</span>
+        <span>Arslan AWS Lab</span>
+      </a>
+      <nav class="nav-links" aria-label="Main menu">
+        <a href="#architecture">Architecture</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a class="github-link" href="https://github.com/arsalanakhtar07-cloud/arslanawslab" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-glow hero-glow-one" aria-hidden="true"></div>
+        <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
+        <div class="hero-copy">
+          <p class="eyebrow"><span aria-hidden="true">👋</span> Hi, I’m Arslan</p>
+          <h1 id="hero-title">One Git push.<br><span>One live AWS website.</span></h1>
+          <p class="hero-lead">My first cloud project turns website code into a secure, globally delivered experience with GitHub Actions, Amazon S3, and CloudFront.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#architecture">See how it works <span aria-hidden="true">↓</span></a>
+            <a class="button button-secondary" href="https://github.com/arsalanakhtar07-cloud/arslanawslab">View the source <span aria-hidden="true">↗</span></a>
+          </div>
+          <ul class="trust-list" aria-label="Project highlights">
+            <li><span aria-hidden="true">🔒</span> Private S3 origin</li>
+            <li><span aria-hidden="true">🌍</span> Global CloudFront CDN</li>
+            <li><span aria-hidden="true">⚡</span> Automatic deployment</li>
+          </ul>
+        </div>
+
+        <div class="hero-visual" aria-label="Visual summary of the deployment pipeline">
+          <div class="terminal-card">
+            <div class="terminal-top">
+              <span></span><span></span><span></span>
+              <p>deployment.yml</p>
+            </div>
+            <div class="terminal-body" aria-hidden="true">
+              <p><span class="terminal-muted">$</span> git push origin main</p>
+              <p><span class="terminal-blue">✓</span> Build static website</p>
+              <p><span class="terminal-blue">✓</span> Authenticate with OIDC</p>
+              <p><span class="terminal-blue">✓</span> Sync files to S3</p>
+              <p><span class="terminal-green">●</span> CloudFront is live</p>
+            </div>
+          </div>
+          <div class="floating-chip chip-github"><span aria-hidden="true">🐙</span> GitHub</div>
+          <div class="floating-chip chip-aws"><span aria-hidden="true">☁️</span> AWS</div>
+          <div class="floating-chip chip-live"><span class="live-dot" aria-hidden="true"></span> Live</div>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="Project facts">
+        <article><strong>HTTPS</strong><span>Secure by default</span></article>
+        <article><strong>Global</strong><span>Edge delivery</span></article>
+        <article><strong>Private</strong><span>S3 bucket access</span></article>
+        <article><strong>Automatic</strong><span>Push to publish</span></article>
+      </section>
+
+      <section class="section architecture-section" id="architecture" aria-labelledby="architecture-title">
+        <div class="section-heading">
+          <p class="kicker"><span aria-hidden="true">🧭</span> Beginner map</p>
+          <h2 id="architecture-title">A small stack with a clear job for every part</h2>
+          <p>GitHub stores the code, Actions handles delivery, S3 stores the files, and CloudFront gives visitors a fast HTTPS address.</p>
+        </div>
+        <figure class="architecture-figure">
+          <img src="/assets/aws-deployment-architecture.png" width="1600" height="900" loading="lazy" alt="Diagram showing Arslan pushing code to GitHub, GitHub Actions deploying to a private S3 bucket, CloudFront delivering the site, and a visitor opening the public URL">
+          <figcaption>Only CloudFront can read the private website bucket. Visitors never connect to S3 directly.</figcaption>
+        </figure>
+      </section>
+
+      <section class="section workflow-section" id="workflow" aria-labelledby="workflow-title">
+        <div class="section-heading section-heading-left">
+          <p class="kicker"><span aria-hidden="true">🚀</span> Push to publish</p>
+          <h2 id="workflow-title">How every update goes live</h2>
+          <p>The pipeline repeats the same safe steps every time, so publishing becomes predictable.</p>
+        </div>
+        <ol class="timeline">
+          <li>
+            <span class="step-number">01</span>
+            <div><h3>Edit and push</h3><p>Arslan updates the website and pushes the change to the main branch on GitHub.</p></div>
+            <span class="step-icon" aria-hidden="true">📝</span>
+          </li>
+          <li>
+            <span class="step-number">02</span>
+            <div><h3>Build and authenticate</h3><p>GitHub Actions prepares the site and requests temporary AWS access through OIDC.</p></div>
+            <span class="step-icon" aria-hidden="true">🔐</span>
+          </li>
+          <li>
+            <span class="step-number">03</span>
+            <div><h3>Upload to private S3</h3><p>The new files are synchronized to S3 while public bucket access remains blocked.</p></div>
+            <span class="step-icon" aria-hidden="true">📦</span>
+          </li>
+          <li>
+            <span class="step-number">04</span>
+            <div><h3>Refresh CloudFront</h3><p>The cache is cleared so the public HTTPS URL starts serving the latest version.</p></div>
+            <span class="step-icon" aria-hidden="true">🌍</span>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section proof-section" aria-labelledby="proof-title">
+        <div class="proof-card">
+          <div>
+            <p class="kicker"><span aria-hidden="true">✨</span> What this project proves</p>
+            <h2 id="proof-title">Cloud skills you can see working</h2>
+          </div>
+          <div class="proof-grid">
+            <article><span aria-hidden="true">🏗️</span><h3>Infrastructure as code</h3><p>The complete AWS setup is documented in a reusable CloudFormation template.</p></article>
+            <article><span aria-hidden="true">🛡️</span><h3>Least-privilege access</h3><p>The deployment role can update only this website bucket and distribution.</p></article>
+            <article><span aria-hidden="true">🔁</span><h3>Continuous delivery</h3><p>Every approved push follows the same automated route to production.</p></article>
+            <article><span aria-hidden="true">📣</span><h3>Search-ready content</h3><p>Metadata, structured answers, a sitemap, and semantic HTML help discovery.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section faq-section" id="faq" aria-labelledby="faq-title">
+        <div class="section-heading">
+          <p class="kicker"><span aria-hidden="true">💡</span> Clear answers</p>
+          <h2 id="faq-title">AWS deployment FAQ</h2>
+          <p>Quick answers for anyone learning how this project works.</p>
+        </div>
+        <div class="faq-list">
+          <details open>
+            <summary>What is Arslan AWS Lab?<span aria-hidden="true">+</span></summary>
+            <p>Arslan AWS Lab is a beginner-friendly static website project that demonstrates an automatic deployment from GitHub to AWS.</p>
+          </details>
+          <details>
+            <summary>How does a GitHub update reach the live website?<span aria-hidden="true">+</span></summary>
+            <p>A push to the main branch starts GitHub Actions. The workflow builds the site, uploads it to a private S3 bucket, and invalidates the CloudFront cache.</p>
+          </details>
+          <details>
+            <summary>Are AWS access keys stored in GitHub?<span aria-hidden="true">+</span></summary>
+            <p>No. GitHub Actions uses OIDC to request short-lived AWS credentials for a tightly limited IAM role.</p>
+          </details>
+          <details>
+            <summary>Why use CloudFront in front of S3?<span aria-hidden="true">+</span></summary>
+            <p>CloudFront provides HTTPS, edge caching, a public URL, and controlled access to the private S3 origin.</p>
+          </details>
+        </div>
+      </section>
+
+      <section class="cta-section" aria-labelledby="cta-title">
+        <div>
+          <p class="kicker"><span aria-hidden="true">☁️</span> First project, strong foundation</p>
+          <h2 id="cta-title">Built to learn. Wired to grow.</h2>
+          <p>From now on, a GitHub push is all it takes to update this AWS website.</p>
+        </div>
+        <a class="button button-light" href="https://github.com/arsalanakhtar07-cloud/arslanawslab">Explore the repository <span aria-hidden="true">↗</span></a>
+      </section>
+    </main>
+
+    <footer>
+      <a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true">A</span><span>Arslan AWS Lab</span></a>
+      <p>Built by Arslan with ChatGPT Codex <span aria-hidden="true">🤝</span></p>
+      <p>© <span id="current-year">2026</span> Arslan. First AWS project.</p>
+    </footer>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>
+

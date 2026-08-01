@@ -1,0 +1,20 @@
+# Arslan AWS Lab
+
+> Arslan AWS Lab is Arslan's first AWS project. It demonstrates a secure, automatic static website deployment from GitHub to Amazon S3 and CloudFront.
+
+## Key facts
+
+- Author: Arslan
+- Source: https://github.com/arsalanakhtar07-cloud/arslanawslab
+- Hosting: private Amazon S3 bucket behind Amazon CloudFront
+- Deployment: GitHub Actions with AWS OIDC short-lived credentials
+- Public site: __SITE_URL__/
+
+## How deployment works
+
+1. A change is pushed to the main branch on GitHub.
+2. GitHub Actions builds the static website.
+3. OIDC provides temporary, limited AWS access.
+4. Website files are synchronized to the private S3 bucket.
+5. CloudFront cache is invalidated and visitors receive the latest version over HTTPS.
+

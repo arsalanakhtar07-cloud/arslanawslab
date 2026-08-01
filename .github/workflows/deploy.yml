@@ -1,0 +1,73 @@
+name: Deploy static website to AWS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "site/**"
+      - "scripts/build_site.py"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: arslanawslab-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+
+      - name: Build the static website
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: python3 scripts/build_site.py --site-url "$SITE_URL"
+
+      - name: Configure short-lived AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: GitHubActions-ArslanAwsLab
+
+      - name: Upload website to private S3
+        env:
+          BUCKET: ${{ vars.AWS_S3_BUCKET }}
+        run: |
+          aws s3 sync dist/ "s3://$BUCKET" \
+            --delete \
+            --only-show-errors \
+            --cache-control "public,max-age=300"
+          aws s3 cp dist/ "s3://$BUCKET" \
+            --recursive \
+            --only-show-errors \
+            --exclude "*" \
+            --include "*.html" \
+            --include "*.xml" \
+            --include "*.txt" \
+            --cache-control "public,max-age=0,must-revalidate"
+
+      - name: Refresh CloudFront
+        env:
+          DISTRIBUTION_ID: ${{ vars.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "$DISTRIBUTION_ID" \
+            --paths "/*"
+
+      - name: Publish deployment summary
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          echo "### Deployment complete ☁️" >> "$GITHUB_STEP_SUMMARY"
+          echo "The latest site is live at [$SITE_URL]($SITE_URL)." >> "$GITHUB_STEP_SUMMARY"
+
