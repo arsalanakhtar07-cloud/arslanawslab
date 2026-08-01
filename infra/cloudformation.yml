@@ -10,6 +10,16 @@ Parameters:
     Type: String
     Default: arslanawslab
     AllowedPattern: "[A-Za-z0-9_.-]+"
+  GitHubOwnerId:
+    Type: String
+    Default: "311756582"
+    AllowedPattern: "[0-9]+"
+    Description: Immutable GitHub owner ID used in the OIDC subject.
+  GitHubRepositoryId:
+    Type: String
+    Default: "1319296141"
+    AllowedPattern: "[0-9]+"
+    Description: Immutable GitHub repository ID used in the OIDC subject.
   ExistingGitHubOidcProviderArn:
     Type: String
     Default: ""
@@ -134,8 +144,7 @@ Resources:
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
-              StringLike:
-                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOwner}/${GitHubRepository}:*"
+                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOwner}@${GitHubOwnerId}/${GitHubRepository}@${GitHubRepositoryId}:ref:refs/heads/main"
       Policies:
         - PolicyName: DeployStaticWebsite
           PolicyDocument:
