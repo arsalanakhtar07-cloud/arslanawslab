@@ -32,6 +32,25 @@ jobs:
           SITE_URL: ${{ vars.SITE_URL }}
         run: python3 scripts/build_site.py --site-url "$SITE_URL"
 
+      - name: Confirm GitHub OIDC identity
+        shell: bash
+        run: |
+          response="$(curl --fail --silent --show-error \
+            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com")"
+          OIDC_RESPONSE="$response" python3 - <<'PY'
+          import base64
+          import json
+          import os
+
+          token = json.loads(os.environ["OIDC_RESPONSE"])["value"]
+          payload = token.split(".")[1]
+          payload += "=" * (-len(payload) % 4)
+          claims = json.loads(base64.urlsafe_b64decode(payload))
+          print(f"OIDC audience: {claims.get('aud')}")
+          print(f"OIDC subject: {claims.get('sub')}")
+          PY
+
       - name: Configure short-lived AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
@@ -70,4 +89,3 @@ jobs:
         run: |
           echo "### Deployment complete ☁️" >> "$GITHUB_STEP_SUMMARY"
           echo "The latest site is live at [$SITE_URL]($SITE_URL)." >> "$GITHUB_STEP_SUMMARY"
-
